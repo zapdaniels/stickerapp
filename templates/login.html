@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container mt-5">
     <h2>Login</h2>
-    <form method="POST" action="{{ url_for('login') }}">
+    <form id="login-form" method="POST" action="{{ url_for('login') }}">
         <div class="form-group">
             <label for="email">Email address</label>
             <input type="email" class="form-control" id="email" name="email" required>
@@ -12,7 +12,15 @@
             <label for="password">Password</label>
             <input type="password" class="form-control" id="password" name="password" required>
         </div>
-        <button type="submit" class="btn btn-primary">Login</button>
+        <button class="g-recaptcha btn btn-primary" 
+                data-sitekey="{{sitekey}}" 
+                data-callback='onSubmit' 
+                data-action='submit'>Login</button>
     </form>
 </div>
+<script>
+    function onSubmit(token) {
+      document.getElementById("login-form").submit();
+    }
+</script>
 {% endblock content %}

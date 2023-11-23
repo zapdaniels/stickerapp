@@ -3,19 +3,6 @@
 {% block content %}
 <div class="container mt-5">
 
-    {% with messages = get_flashed_messages(with_categories=True) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{'danger' if category == 'error' else 'info'}} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-
     <h2>Register</h2>
     <form id="register-form" method="POST" action="{{ url_for('register') }}">
         <div class="form-group">
@@ -30,12 +17,12 @@
                 data-sitekey="{{sitekey}}" 
                 data-callback='onSubmit' 
                 data-action='submit'>Register</button>
-        <!-- <button type="submit" class="btn btn-primary">Register</button> -->
+
     </form>
 </div>
 <script>
     function onSubmit(token) {
       document.getElementById("register-form").submit();
     }
-  </script>
+</script>
 {% endblock content %}

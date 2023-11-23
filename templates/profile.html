@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Dein Profil</h2>
+    <form method="POST" action="/profile/edit">
+      <input type="hidden" name="user_id" value="{{user.id}}" >
+      <div class="form-group">
+           <label for="email">Email:</label>
+           <p id="emailParagraph">{{user.email}}</p>
+      </div>
+
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" class="form-control" id="username" name="user_name" value="{{user.name or ''}}" placeholder="Dein Anzeigename (anstelle deiner E-Mail)">
+      </div>
+  
+      <div class="form-group">
+        <label for="contact">Kontakt:</label>
+        <textarea class="form-control" id="contact" rows="3" name="user_contact" value="{{user.contact}}" placeholder="Wie sollen dich andere Benutzer kontaktieren?
+E-Mail? Oder Handynummer für WhatsApp, Signal etc.?"></textarea>
+      </div>
+  
+      <button type="submit" class="btn btn-primary">Speichern</button>
+    </form>
+  </div>
+  {% endblock content %}

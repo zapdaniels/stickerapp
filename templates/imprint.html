@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <div class="jumbotron">
+      <h1 class="display-4">Wichtiges</h1>
+      <p class="lead">Informationen, Rechtliches & Impressum.</p>
+    </div>
+
+    <div class="mb-4">
+        <h2>Verwendung</h2>
+        <p>Diese Webapplication ist aus der Idee geboren Freunden und Familie ein Möglichkeit zu bieten ihre fehlenden und doppelten Sticker der Sammelaktion 2023-2024 des <b>KSV<i>(Kevelaerer Sportverein)</i> und Edeka Brüggemeier</b> zu tauschen.</p>
+    </div>
+
+    <div class="mb-4">
+        <h2>Wie es funktionierts</h2>
+        <ol>
+            <li>Du registrierst dich <i>(Notwendig um die Speicherung der gesuchten und abzugebenden Sticker zu ermöglichen)</i></li>
+            <li>Du entscheidest wie die anderen dich kontaktieren sollen (<a href="/profile">siehe Profil</a>)</li>
+            <li>Du markierst Sticker die du noch <a href="/stickers">suchst</a> oder bietest <a href="/wanted">anderen</a> deine doppelten an.</li>
+            <li>Solltest du Sticker als <b>gesucht</b> markiert haben, teile den Link mit Freunden. </li>
+            <li>Diese können zu deinen <i>Gesucht</i>-Markierungen ihre <i>Abzugeben</i>-Markierung setzen.</li>
+            <li>Solltest du von einer dir unbekannten Person Sticker angeboten bekommen helfen die Kontaktdaten weiter.</li>
+        </ol>
+    </div>
+
+    <div class="mb-4">
+        <h2>Datenschutz</h2>
+        <p>Diese Applikation ausschließlich für Freunde und Familie implementiert und verfolgt kein kommerziellen Ziele oder ähnliches.</p>
+         
+        <h3>Spielernamen</h3>
+        <p>
+            Ich nehme Datenschutz sehr ernst und habe abgewogen ob die Auflistung aller Namen aus dem Stickeralbum übernehme kann.<br />
+            Hätte es bevorzugt wenn jedem Sticker eine eindeutige Nummer oder ID zugewiesen wäre, da dies leider nicht der Fall ist bleiben nur die vollen Namen. 
+            Sollte jemand nicht wollen, dass der eigene Name oder der Name eine Kindes hier in dem Auftritt genannt ist. Gerne melden, ich entferne diese umgehend. 
+        </p>
+
+        <h3>Geschützte Registrierung und Login</h3>
+        <p>
+            Sowohl die Registrierung als auch der Login ist mit der aktuellsten Version von <a href="https://developers.google.com/recaptcha?hl=de">reCAPTCHA v3</a> gesichert um den Login durch Bots zu erschweren.
+        </p>
+
+        <h3>Benutzerprofile</h3>
+        <p>
+            Die Eingabe jeglicher Daten ist freiweilig. Es werden keine Daten validiert oder ausgewertet.
+            Passwörter sind per <a href="https://de.wikipedia.org/wiki/Bcrypt">Bcrypt</a> Hash Algorithmus verschlüsselt und auch für den Admin nicht einsehbar. 
+            Dennoch wird davon abgeraten Passwörter zwischen Diensten wiederzuverwenden!
+        </p>
+
+        <h3>E-Mails</h3>
+        <p>
+            Bis auf Weiteres ist es <b><u>nicht</u></b> vorgesehen, dass dieser Service E-Mails versendet. Vergessene Passwörter sind und bleiben vergessen. 
+            In einem solchen Fall kontaktiert mich direkt und wir überlegen was wir machen können.
+        </p>
+
+        
+    </div>
+
+
+    <div class="mb-4">
+      <h2>Verantwortlich für den Inhalt</h2>
+      <p>
+        Sebastian Daniels<br />
+        47623 Kevelaer<br />
+        E-Mail: sebastiandaniels (at) gmx.de
+      </p>
+    </div>
+
+
+  </div>
+  {% endblock content %}

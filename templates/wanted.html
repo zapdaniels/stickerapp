@@ -2,17 +2,19 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Benutzer</h2>
+    <h2>Gesucht</h2>
     <table class="table table-striped">
         <thead>
             <tr>
                 <th>E-Mail</th>
+                <th>Gesucht</th>
             </tr>
         </thead>
         <tbody>
             {% for user in users %}
                 <tr>
-                    <td><a href="/users/{{ user.id }}">{{ user.email }}</a></td>
+                    <td>{{ user }}</td>
+                    <td><a class="btn btn-primary" href="/wanted/{{ user.id }}">{{user.sticker_wanted|length}}</a></td>
                 </tr>
             {% endfor %}
         </tbody>

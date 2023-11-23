@@ -68,6 +68,16 @@
         .slider.round:before {
           border-radius: 50%;
         }
+
+
+        .footer {
+          position: fixed;
+          bottom: 0;
+          width: 100%;
+          background-color: #f8f9fa; /* Hintergrundfarbe des Fußbereichs */
+          padding: 10px 0;
+        }
+
     </style>
 </head>
 <body>
@@ -83,43 +93,71 @@
             <li class="nav-item active">
                 <a class="nav-link" href="/">Meine Suche</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/stickers">Alle Sticker</a>
+            <li class="nav-item active">
+                <a class="nav-link" href="/stickers" >Sticker</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/users">Benutzer</a>
+            <li class="nav-item active">
+              <a class="nav-link" href="/wanted">Gesucht</a>
             </li>
         </ul>
+        <ul class="navbar-nav ml-auto">
         {% if not user %}
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/login">Anmelden</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/register">Registieren</a>
-                </li>
-            </ul>
+          <li class="nav-item active">
+            <a class="nav-link" href="/imprint">Impressum</a>
+          </li>
+          <li class="nav-item dropdown active">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <strong>Benutzer</strong>
+            </a>
+            <!-- Dropdown Menu -->
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="nav-link" href="/login">Anmelden</a>
+              <a class="nav-link" href="/register">Registieren</a>
+            </div>
+          </li>
         {% else %}
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <span class="navbar-text">
-                        <strong>{{ user.email }}</strong>
-                    </span>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/logout">Abmelden</a>
-                </li>
-            </ul>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <strong>{{ user.email }}</strong>
+            </a>
+            <!-- Dropdown Menu -->
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="/profile">Profil</a>
+                <a class="dropdown-item" href="/logout">Abmelden</a>
+            </div>
+          </li>
         {% endif %}
+        </ul>
     </div>
 </nav>
 
-
+<div class="container mt-4">
+{% with messages = get_flashed_messages(with_categories=True) %}
+{% if messages %}
+    {% for category, message in messages %}
+        <div class="alert alert-{{'danger' if category == 'error' else 'info'}} alert-dismissible fade show" role="alert"
+        hx-after="5000" style="transition: opacity 1s ease;"
+        >
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endfor %}
+{% endif %}
+{% endwith %}
+</div>
 
 {% block content %}
 <h1>Welcome to {{ title }}!</h1>
 {% endblock content %}
 
+
+<footer class="footer mt-auto py-3 bg-light">
+  <div class="container">
+    <p class="text-muted">Wichtige Informationen, Rechtliches & Impressum - <a href="/imprint">Mehr</a></p>
+  </div>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
