@@ -47,6 +47,8 @@ class StickerOffer(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     sticker_wanted_id = db.Column(db.Integer, db.ForeignKey('sticker_wanted.id'), nullable=False)
     offer_to = db.relationship('StickerWanted')
+    user = db.relationship('User')
+    sw = db.relationship('StickerWanted')
 
 
 

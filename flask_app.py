@@ -46,11 +46,21 @@ admin = init_admin(app)
 @app.route('/')
 def home():
     user = session.get('user')
+    selected_user = None
     stickers = []
+    sticker_wanted_by_sticker_ids = {}
+    users_with_offer = []
     if user:
+        selected_user = User.query.filter_by(id=int(user['id'])).first()
         sticker_wanted = StickerWanted.query.filter_by(user_id=user['id']).all()
+        for sw in sticker_wanted:
+            for offer in sw.offers:
+                if offer.user in users_with_offer:
+                    continue
+                users_with_offer.append(offer.user)
+        sticker_wanted_by_sticker_ids = {sw.sticker_id : sw for sw in sticker_wanted}
         stickers = [sw.sticker for sw in sticker_wanted]
-    return render_template('mypage.html', user=user, stickers=stickers)
+    return render_template('mypage.html', user=user, stickers=stickers, selected_user=selected_user, sticker_wanted_by_sticker_ids=sticker_wanted_by_sticker_ids, users_with_offer=users_with_offer)
 
 @app.route('/imprint')
 def imprint():
@@ -76,19 +86,41 @@ def wanted():
     users_wanting_any_sticker = User.query.filter(User.sticker_wanted.any()).all()
     return render_template('wanted.html', users=users_wanting_any_sticker)
 
+
 @app.route('/wanted/<user_id>')
 def wanted_sticker(user_id):
     user = session.get('user')
+    if not user:
+        return redirect(url_for('login'))
     selected_user = User.query.filter_by(id=int(user_id)).first()
     stickers = []
     if selected_user:
         sticker_wanted = StickerWanted.query.filter_by(user_id=selected_user.id).all()
-        stickers = [sw.sticker for sw in sticker_wanted]
-    return render_template('wanted_sticker.html', selected_user=selected_user, stickers=stickers, user=user)
+        sticker_wanted_by_sticker_ids = {sw.sticker_id : sw for sw in sticker_wanted}
+        stickers = [sw.sticker for sw in sticker_wanted]        
+        sticker_wanted_by_offered_ids = {}
+        for sw in sticker_wanted:
+            if user['id'] in [o.user_id for o in sw.offers]:
+                sticker_wanted_by_offered_ids[sw.sticker_id] = sw.id 
+    return render_template('wanted_sticker.html', selected_user=selected_user, stickers=stickers, user=user, sticker_wanted_by_offered_ids=sticker_wanted_by_offered_ids, sticker_wanted_by_sticker_ids=sticker_wanted_by_sticker_ids)
+
+@app.route('/offer/<user_id>')
+def offered_sticker(user_id):
+    user = session.get('user')
+    if not user:
+        return redirect(url_for('login'))
+    selected_user = User.query.filter_by(id=int(user_id)).first()
+    stickers = []
+    if selected_user:
+        sticker_wanted = StickerWanted.query.filter_by(user_id=user['id']).all()
+        sticker_wanted_ids = [sw.id for sw in sticker_wanted]
+        sticker_offered = StickerOffer.query.filter_by(user_id=selected_user.id).filter(StickerOffer.sticker_wanted_id.in_(sticker_wanted_ids)).all()
+        stickers = [o.sw.sticker for o in sticker_offered]        
+    return render_template('offered_sticker.html', selected_user=selected_user, stickers=stickers, user=user)
 
 
-@app.route('/toggle', methods=['PUT'])
-def toggle():
+@app.route('/toggle/wanted', methods=['PUT'])
+def toggle_wanted():
     try:
         sticker_id = request.form.get("sticker_id", type=int)
         user_id = request.form.get("user_id", type=int)
@@ -111,6 +143,29 @@ def toggle():
     print(message)
     return jsonify({"status": "ok", "message": message})
 
+@app.route('/toggle/offer', methods=['PUT'])
+def toggle_offer():
+    try:
+        sticker_wanted_id = request.form.get("sticker_wanted_id", type=int)
+        user_id = request.form.get("user_id", type=int)
+        is_checked = request.form.get("is_checked") in ['1', 'on', 'true']
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)})
+    sticker_wanted = db.session.query(StickerWanted).get(sticker_wanted_id)
+    sticker_offer = StickerOffer.query.filter_by(user_id=user_id, sticker_wanted_id=sticker_wanted_id).first()
+    message = "no change"
+    if sticker_offer and is_checked is False:
+        # Sticker request exists, delete it
+        db.session.delete(sticker_offer)
+        db.session.commit()
+        message = f"removed sticker offer entry for user sticker={sticker_wanted_id} user={user_id}"
+    if sticker_offer is None and is_checked is True:
+        new = StickerOffer(user_id=user_id, sticker_wanted_id=sticker_wanted_id)
+        db.session.add(new)
+        db.session.commit()
+        message = f"added sticker offer entry for user sticker={sticker_wanted_id} user={user_id}"
+    print(message)
+    return jsonify({"status": "ok", "message": message})
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

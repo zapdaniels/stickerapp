@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Sticker die ich Suche</h2>
+    <h2>Meine Suche</h2>
     {% if not user %}
     <div class="alert alert-info">
         Bitte erst einen <a href="/register">Account einrichten</a> und/oder <a href="/login">anmelden</a> um Sticker zu markieren.
@@ -13,8 +13,30 @@
     </div>
     {% else %}
     {% set checkbox_wanted = True %}
-    {% set checkbox_offer = False %}
+    {% set checkbox_offer = True %}
     {% include 'sticker_table.html' %}
     {% endif %}
 </div>
+
+{% if users_with_offer %}
+<div class="container mt-4">
+    <h2>Angebote</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Benutzer</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users_with_offer %}
+                <tr>
+                    <td>{{ user }}</td>
+                    <td><a class="btn btn-primary" href="/offer/{{ user.id }}">Ansehen</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
 {% endblock content %}

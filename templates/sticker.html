@@ -41,7 +41,7 @@
                         <label class="switch">
                             <input type="checkbox"
                                 hx-trigger="change"
-                                hx-put="/toggle" 
+                                hx-put="/toggle/wanted" 
                                 hx-vals="js:{sticker_id: {{ sticker.id }}, is_checked: event.srcElement.checked, user_id: {{ user.id if user else 0 }}}"
                                 {{"checked" if sticker.id in sticker_ids_wanted}} 
                                 >

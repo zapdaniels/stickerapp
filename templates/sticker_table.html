@@ -8,7 +8,10 @@
             <th>Suche Ich</th>
             {% endif %}
             {% if checkbox_offer and user %}
+            <th>Angebote</th>
+            {% if user.id != selected_user.id %}
             <th>Abzugeben</th>
+            {% endif %}
             {% endif %}
         </tr>
     </thead>
@@ -31,17 +34,24 @@
             </td>
             {% endif %}
             {% if checkbox_offer and user %}
+            {% set sw = sticker_wanted_by_sticker_ids[sticker.id] %}
+            <td>
+                <span class="badge badge-info" style="padding: 1em;background-color: #17b81c;">{{sw.offers|length}}</span>
+
+            </td>
+            {% if user.id != selected_user.id %}
             <td>
                 <label class="switch">
                     <input type="checkbox"
                         hx-trigger="change"
                         hx-put="/toggle/offer"
-                        hx-vals="js:{sticker_id: {{ sticker.id }}, is_checked: event.srcElement.checked, user_id: {{ user.id if user else 0 }}}"
-                        checked
+                        hx-vals="js:{sticker_wanted_id: {{ sw.id }}, is_checked: event.srcElement.checked, user_id: {{ user.id if user else 0 }}}"
+                        {{"checked" if sticker.id in sticker_wanted_by_offered_ids}}
                         >
-                    <span class="slider round"></span>
+                    <span class="slider round green"></span>
                 </label>
             </td>
+            {% endif %}
             {% endif %}
         </tr>
         {% endfor %}
