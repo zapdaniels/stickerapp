@@ -5,6 +5,10 @@ from pathlib import Path
 import dotenv
 this_dir = Path(__file__).parent
 dotenv.load_dotenv(this_dir)
+try
+    import myenv
+except ImportError:
+    pass
 
 RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify"
 RECAPTCHA_WEBSITE_KEY = os.environ['RECAPTCHA_WEBSITE_KEY']
