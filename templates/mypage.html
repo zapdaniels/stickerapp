@@ -5,14 +5,15 @@
     <h2>Sticker die ich Suche</h2>
     {% if not user %}
     <div class="alert alert-info">
-        Bitte erst einen <a href="/register">Account einrichten</a> und/oder <a href="/loging">einloggen</a> um Sticker zu markieren.
+        Bitte erst einen <a href="/register">Account einrichten</a> und/oder <a href="/login">anmelden</a> um Sticker zu markieren.
     </div>
     {% elif not stickers %}
     <div class="alert alert-info">
         Es sind keine Sticker von dir markiert. Gehe zu <a href="/stickers">Alle Sticker</a> und markiere was du suchst.
     </div>
     {% else %}
-    {% set checkbox = True %}
+    {% set checkbox_wanted = True %}
+    {% set checkbox_offer = False %}
     {% include 'sticker_table.html' %}
     {% endif %}
 </div>

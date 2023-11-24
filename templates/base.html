@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
-          integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
-    <script src="https://www.google.com/recaptcha/api.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <title>KSV Stickertausch 2023</title>
     <style>
         .switch {
@@ -77,8 +76,8 @@
           background-color: #f8f9fa; /* Hintergrundfarbe des Fußbereichs */
           padding: 10px 0;
         }
-
     </style>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
 </head>
 <body>
 
@@ -91,23 +90,23 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
             <li class="nav-item active">
-                <a class="nav-link" href="/">Meine Suche</a>
+                <a class="nav-link" href="/"><i class="fas fa-clipboard-list"></i> Meine Suche</a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="/stickers" >Sticker</a>
+                <a class="nav-link" href="/stickers" ><i class="fas fa-id-card-alt"></i> Sticker</a>
             </li>
             <li class="nav-item active">
-              <a class="nav-link" href="/wanted">Gesucht</a>
+              <a class="nav-link" href="/wanted"><i class="fas fa-search"></i> Gesucht</a>
             </li>
         </ul>
         <ul class="navbar-nav ml-auto">
         {% if not user %}
           <li class="nav-item active">
-            <a class="nav-link" href="/imprint">Impressum</a>
+            <a class="nav-link" href="/imprint"><i class="fa fa-info" aria-hidden="true"></i> Info</a>
           </li>
           <li class="nav-item dropdown active">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <strong>Benutzer</strong>
+              <strong><i class="fas fa-user"></i> Benutzer</strong>
             </a>
             <!-- Dropdown Menu -->
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -122,8 +121,8 @@
             </a>
             <!-- Dropdown Menu -->
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="/profile">Profil</a>
-                <a class="dropdown-item" href="/logout">Abmelden</a>
+                <a class="dropdown-item" href="/profile"><i class="fa fa-user"></i> Profil</a>
+                <a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i> Abmelden</a>
             </div>
           </li>
         {% endif %}
@@ -155,7 +154,7 @@
 
 <footer class="footer mt-auto py-3 bg-light">
   <div class="container">
-    <p class="text-muted">Wichtige Informationen, Rechtliches & Impressum - <a href="/imprint">Mehr</a></p>
+    <p class="text-muted">Wichtige Informationen, Rechtliches & Impressum - <a href="/imprint"><i class="fa fa-info-circle" aria-hidden="true"></i> Info</a></p>
   </div>
 </footer>
 

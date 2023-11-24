@@ -3,14 +3,15 @@
 {% block content %}
 {% if selected_user %}
     <div class="container mt-4">
-        <h2>Gesuchte Sticker</h2>
+        <h2><i class="fas fa-tasks"></i> Gesuchte Sticker</h2>
         <p>Von: <i>{{selected_user.email}}</i></p>
         <div class="container">
             <p class="alert alert-primary">
                 Markiere die Sticker die Du anbieten kannst
             </p>
           </div>
-        {% set checkbox = False %}
+        {% set checkbox_wanted = False %}
+        {% set checkbox_offer = True %}
         {% include 'sticker_table.html' %}
     </div>
 {% endif %}

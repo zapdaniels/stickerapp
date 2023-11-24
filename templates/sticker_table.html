@@ -4,8 +4,11 @@
         <tr>
             <th>Team</th>
             <th>Sticker</th>
-            {% if checkbox and user %}
+            {% if checkbox_wanted and user %}
             <th>Suche Ich</th>
+            {% endif %}
+            {% if checkbox_offer and user %}
+            <th>Abzugeben</th>
             {% endif %}
         </tr>
     </thead>
@@ -14,12 +17,25 @@
         <tr>
             <td>{{ sticker.team.name }}</td>
             <td>{{ sticker.name }}</td>
-            {% if checkbox and user %}
+            {% if checkbox_wanted and user %}
             <td>
                 <label class="switch">
                     <input type="checkbox"
                         hx-trigger="change"
-                        hx-put="/toggle"
+                        hx-put="/toggle/wanted"
+                        hx-vals="js:{sticker_id: {{ sticker.id }}, is_checked: event.srcElement.checked, user_id: {{ user.id if user else 0 }}}"
+                        checked
+                        >
+                    <span class="slider round"></span>
+                </label>
+            </td>
+            {% endif %}
+            {% if checkbox_offer and user %}
+            <td>
+                <label class="switch">
+                    <input type="checkbox"
+                        hx-trigger="change"
+                        hx-put="/toggle/offer"
                         hx-vals="js:{sticker_id: {{ sticker.id }}, is_checked: event.srcElement.checked, user_id: {{ user.id if user else 0 }}}"
                         checked
                         >
