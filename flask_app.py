@@ -72,7 +72,7 @@ def imprint():
     return render_template('imprint.html')
 
 @app.route('/stickers')
-def sticker():
+def stickers():
     context = Context()
     context.team_id =  request.args.get("team_id", default=None, type=int)
     context.teams = Team.query.all()
@@ -84,17 +84,17 @@ def sticker():
     if context.login_user:
         context.stickers_wanted = StickerWanted.query.filter_by(user_id=context.login_user.id).all()
         context.sticker_ids_wanted = [sw.sticker_id for sw in context.stickers_wanted]
-    return render_template('sticker.html', **context.data)
+    return render_template('stickers.html', **context.data)
 
-@app.route('/wanted')
-def wanted():
+@app.route('/users_questing')
+def users_questing():
     context = Context()
     context.users = User.query.filter(User.sticker_wanted.any()).all()
-    return render_template('wanted.html', **context.data)
+    return render_template('users_questing.html', **context.data)
 
 
 @app.route('/wanted/<user_id>')
-def wanted_sticker(user_id):
+def stickers_wanted(user_id):
     context = Context()
     if not context.login_user:
         return redirect(url_for('login'))
@@ -108,21 +108,21 @@ def wanted_sticker(user_id):
         for sw in context.sticker_wanted:
             if context.login_user.id in [o.user_id for o in sw.offers]:
                 context.sticker_wanted_by_offered_ids[sw.sticker_id] = sw.id 
-    return render_template('wanted_sticker.html', **context.data)
+    return render_template('stickers_wanted.html', **context.data)
 
 @app.route('/offer/<user_id>')
-def offered_sticker(user_id):
-    user = session.get('user')
-    if not user:
+def stickers_offered(user_id):
+    context = Context()
+    if not context.login_user:
         return redirect(url_for('login'))
-    selected_user = User.query.filter_by(id=int(user_id)).first()
-    stickers = []
-    if selected_user:
-        sticker_wanted = StickerWanted.query.filter_by(user_id=user['id']).all()
-        sticker_wanted_ids = [sw.id for sw in sticker_wanted]
-        sticker_offered = StickerOffer.query.filter_by(user_id=selected_user.id).filter(StickerOffer.sticker_wanted_id.in_(sticker_wanted_ids)).all()
-        stickers = [o.sw.sticker for o in sticker_offered]        
-    return render_template('offered_sticker.html', selected_user=selected_user, stickers=stickers, user=user)
+    context.selected_user = User.query.filter_by(id=int(user_id)).first()
+    context.stickers = []
+    if context.selected_user:
+        context.sticker_wanted = StickerWanted.query.filter_by(user_id=context.login_user.id).all()
+        context.sticker_wanted_ids = [sw.id for sw in context.sticker_wanted]
+        context.sticker_offered = StickerOffer.query.filter_by(user_id=context.selected_user.id).filter(StickerOffer.sticker_wanted_id.in_(context.sticker_wanted_ids)).all()
+        context.stickers = [o.sw.sticker for o in context.sticker_offered]        
+    return render_template('stickers_offered.html', **context.data)
 
 
 @app.route('/toggle/wanted', methods=['PUT'])
@@ -173,7 +173,7 @@ def toggle_offer():
         message = f"added sticker offer entry for user sticker={sticker_wanted_id} user={user_id}"
     print(message)
     # Replace the offer badge showing the current counter
-    return render_template('offer_badge.html', sw=sticker_wanted)
+    return render_template('stickers_offered_badge.html', sw=sticker_wanted)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
