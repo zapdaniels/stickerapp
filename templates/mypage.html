@@ -12,10 +12,7 @@
         Es sind keine Sticker von dir markiert. Gehe zu <a href="/stickers">Alle Sticker</a> und markiere was du suchst.
     </div>
     {% else %}
-    {% set checkbox_wanted = True %}
-    {% set checkbox_offer = True %}
-    {% set selected_user = login_user %}
-    {% include 'sticker_table.html' %}
+    {% include 'my_sticker_table.html' %}
     {% endif %}
 </div>
 
@@ -26,12 +23,13 @@
         <thead>
             <tr>
                 <th>Benutzer</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             {% for user in users_with_offer %}
                 <tr>
-                    <td>{{ user }}</td>
+                    <td><a href="/offer/{{ user.id }}">{{ user }}</a></td>
                     <td><a class="btn btn-primary" href="/offer/{{ user.id }}">Ansehen</a></td>
                 </tr>
             {% endfor %}

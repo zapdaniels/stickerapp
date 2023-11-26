@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <title>KSV Stickertausch 2023</title>
     <style>
+
         .switch {
           position: relative;
           display: inline-block;
@@ -86,12 +87,13 @@
           background-color: #949794;
         }
 
-        .footer {
-          position: fixed;
-          bottom: 0;
-          width: 100%;
-          background-color: #f8f9fa; /* Hintergrundfarbe des Fußbereichs */
-          padding: 10px 0;
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        main {
+            flex: 1;
         }
     </style>
     <script src="https://www.google.com/recaptcha/api.js"></script>
@@ -171,7 +173,7 @@
 
 <footer class="footer mt-auto py-3 bg-light">
   <div class="container">
-    <p class="text-muted">Wichtige Informationen, Rechtliches & Impressum - <a href="/imprint"><i class="fa fa-info-circle" aria-hidden="true"></i> Info</a></p>
+    <p class="text-muted"><a href="/imprint"><i class="fa fa-info-circle" aria-hidden="true"></i> Infos, Rechtliches & Impressum</a></p>
   </div>
 </footer>
 

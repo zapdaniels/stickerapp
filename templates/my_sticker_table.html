@@ -1,0 +1,33 @@
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Team</th>
+            <th>Sticker</th>
+            <th>Suche</th>
+            <th>Angebote</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for sticker in stickers %}
+        <tr>
+            <td>{{ sticker.team.name }}</td>
+            <td>{{ sticker.name }}</td>
+            <td>
+                <label class="switch">
+                    <input type="checkbox"
+                        hx-trigger="change"
+                        hx-put="/toggle/wanted"
+                        hx-vals="js:{sticker_id: {{ sticker.id }}, is_checked: event.srcElement.checked, user_id: {{ login_user.id if login_user else 0 }}}"
+                        checked
+                        >
+                    <span class="slider round"></span>
+                </label>
+            </td>
+            {% set sw = sticker_wanted_by_sticker_ids[sticker.id] %}
+            <td>
+            {% include 'offer_badge.html' %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

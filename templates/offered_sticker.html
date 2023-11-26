@@ -7,12 +7,11 @@
         <p>Von: <i>{{selected_user}}</i></p>
         <div class="container">
             <p class="alert alert-primary">
-                Folgende Sticker werden dir angeboten
+                Folgende Sticker werden dir angeboten.<br /> 
+                Du kannst die markierung aufheben wenn du die Sticker nicht mehr benötigst.
             </p>
           </div>
-        {% set checkbox_wanted = False %}
-        {% set checkbox_offer = False %}
-        {% include 'sticker_table.html' %}
+        {% include 'offered_sticker_table.html' %}
     </div>
 {% endif %}
 {% endblock content %}
