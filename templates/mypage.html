@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container mt-5">
     <h2>Meine Suche</h2>
-    {% if not user %}
+    {% if not login_user %}
     <div class="alert alert-info">
         Bitte erst einen <a href="/register">Account einrichten</a> und/oder <a href="/login">anmelden</a> um Sticker zu markieren.
     </div>
@@ -14,6 +14,7 @@
     {% else %}
     {% set checkbox_wanted = True %}
     {% set checkbox_offer = True %}
+    {% set selected_user = login_user %}
     {% include 'sticker_table.html' %}
     {% endif %}
 </div>

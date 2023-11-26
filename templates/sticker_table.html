@@ -4,12 +4,12 @@
         <tr>
             <th>Team</th>
             <th>Sticker</th>
-            {% if checkbox_wanted and user %}
+            {% if checkbox_wanted and login_user %}
             <th>Suche Ich</th>
             {% endif %}
-            {% if checkbox_offer and user %}
+            {% if checkbox_offer and login_user %}
             <th>Angebote</th>
-            {% if user.id != selected_user.id %}
+            {% if login_user.id != selected_user.id %}
             <th>Abzugeben</th>
             {% endif %}
             {% endif %}
@@ -20,32 +20,33 @@
         <tr>
             <td>{{ sticker.team.name }}</td>
             <td>{{ sticker.name }}</td>
-            {% if checkbox_wanted and user %}
+            {% if checkbox_wanted and login_user %}
             <td>
                 <label class="switch">
                     <input type="checkbox"
                         hx-trigger="change"
                         hx-put="/toggle/wanted"
-                        hx-vals="js:{sticker_id: {{ sticker.id }}, is_checked: event.srcElement.checked, user_id: {{ user.id if user else 0 }}}"
+                        hx-vals="js:{sticker_id: {{ sticker.id }}, is_checked: event.srcElement.checked, user_id: {{ login_user.id if login_user else 0 }}}"
                         checked
                         >
                     <span class="slider round"></span>
                 </label>
             </td>
             {% endif %}
-            {% if checkbox_offer and user %}
+            {% if checkbox_offer and login_user %}
             {% set sw = sticker_wanted_by_sticker_ids[sticker.id] %}
             <td>
-                <span class="badge badge-info" style="padding: 1em;background-color: #17b81c;">{{sw.offers|length}}</span>
-
+                {% include 'offer_badge.html' %}
             </td>
-            {% if user.id != selected_user.id %}
+            {% if login_user.id != selected_user.id %}
             <td>
                 <label class="switch">
                     <input type="checkbox"
                         hx-trigger="change"
                         hx-put="/toggle/offer"
-                        hx-vals="js:{sticker_wanted_id: {{ sw.id }}, is_checked: event.srcElement.checked, user_id: {{ user.id if user else 0 }}}"
+                        hx-vals="js:{sticker_wanted_id: {{ sw.id }}, is_checked: event.srcElement.checked, user_id: {{ login_user.id if login_user else 0 }}}"
+                        hx-target="#offer-value-{{sw.id}}"
+                        hx-swap="outerHTML"
                         {{"checked" if sticker.id in sticker_wanted_by_offered_ids}}
                         >
                     <span class="slider round green"></span>

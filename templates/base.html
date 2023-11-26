@@ -76,6 +76,15 @@
           border-radius: 50%;
         }
 
+        .offer-active {
+          padding: 0.7em;
+          background-color: #17b81c;
+        }
+        
+        .offer-inactive {
+          padding: 0.7em;
+          background-color: #949794;
+        }
 
         .footer {
           position: fixed;
@@ -108,7 +117,7 @@
             </li>
         </ul>
         <ul class="navbar-nav ml-auto">
-        {% if not user %}
+        {% if not login_user %}
           <li class="nav-item active">
             <a class="nav-link" href="/imprint"><i class="fa fa-info" aria-hidden="true"></i> Info</a>
           </li>
@@ -125,7 +134,7 @@
         {% else %}
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <strong>{{ user.email }}</strong>
+              <strong>{{ login_user.email }}</strong>
             </a>
             <!-- Dropdown Menu -->
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">

@@ -33,6 +33,7 @@ from sqlalchemy.exc import IntegrityError
 
 from models import db, User, Team, Sticker, StickerWanted, StickerOffer
 from admin_app import init_admin
+from flask_context import Context
 
 
 app = Flask(__name__, instance_path=this_dir)
@@ -51,22 +52,20 @@ admin = init_admin(app)
 
 @app.route('/')
 def home():
-    user = session.get('user')
-    selected_user = None
-    stickers = []
-    sticker_wanted_by_sticker_ids = {}
-    users_with_offer = []
-    if user:
-        selected_user = User.query.filter_by(id=int(user['id'])).first()
-        sticker_wanted = StickerWanted.query.filter_by(user_id=user['id']).all()
-        for sw in sticker_wanted:
+    context = Context()
+    context.stickers = []
+    context.sticker_wanted_by_sticker_ids = {}
+    context.users_with_offer = []
+    if context.login_user:
+        context.sticker_wanted = StickerWanted.query.filter_by(user_id=context.login_user.id).all()
+        for sw in context.sticker_wanted:
             for offer in sw.offers:
-                if offer.user in users_with_offer:
+                if offer.user in context.users_with_offer:
                     continue
-                users_with_offer.append(offer.user)
-        sticker_wanted_by_sticker_ids = {sw.sticker_id : sw for sw in sticker_wanted}
-        stickers = [sw.sticker for sw in sticker_wanted]
-    return render_template('mypage.html', user=user, stickers=stickers, selected_user=selected_user, sticker_wanted_by_sticker_ids=sticker_wanted_by_sticker_ids, users_with_offer=users_with_offer)
+                context.users_with_offer.append(offer.user)
+        context.sticker_wanted_by_sticker_ids = {sw.sticker_id : sw for sw in context.sticker_wanted}
+        context.stickers = [sw.sticker for sw in context.sticker_wanted]
+    return render_template('mypage.html', **context.data)
 
 @app.route('/imprint')
 def imprint():
@@ -74,41 +73,42 @@ def imprint():
 
 @app.route('/stickers')
 def sticker():
-    user = session.get('user')
-    team_id =  request.args.get("team_id", default=None, type=int)
-    teams = Team.query.all()
-    if team_id:
-        stickers = Sticker.query.filter_by(team_id=int(team_id)).all()
+    context = Context()
+    context.team_id =  request.args.get("team_id", default=None, type=int)
+    context.teams = Team.query.all()
+    if context.team_id:
+        context.stickers = Sticker.query.filter_by(team_id=int(context.team_id)).all()
     else:
-        stickers = Sticker.query.all()
-    sticker_ids_wanted = []
-    if user:
-        stickers_wanted = StickerWanted.query.filter_by(user_id=user['id']).all()
-        sticker_ids_wanted = [sw.sticker_id for sw in stickers_wanted]
-    return render_template('sticker.html', user=user, teams=teams, team_id=team_id, stickers=stickers, sticker_ids_wanted=sticker_ids_wanted)
+        context.stickers = Sticker.query.all()
+    context.sticker_ids_wanted = []
+    if context.login_user:
+        context.stickers_wanted = StickerWanted.query.filter_by(user_id=context.login_user.id).all()
+        context.sticker_ids_wanted = [sw.sticker_id for sw in context.stickers_wanted]
+    return render_template('sticker.html', **context.data)
 
 @app.route('/wanted')
 def wanted():
-    users_wanting_any_sticker = User.query.filter(User.sticker_wanted.any()).all()
-    return render_template('wanted.html', users=users_wanting_any_sticker)
+    context = Context()
+    context.users = User.query.filter(User.sticker_wanted.any()).all()
+    return render_template('wanted.html', **context.data)
 
 
 @app.route('/wanted/<user_id>')
 def wanted_sticker(user_id):
-    user = session.get('user')
-    if not user:
+    context = Context()
+    if not context.login_user:
         return redirect(url_for('login'))
-    selected_user = User.query.filter_by(id=int(user_id)).first()
-    stickers = []
-    if selected_user:
-        sticker_wanted = StickerWanted.query.filter_by(user_id=selected_user.id).all()
-        sticker_wanted_by_sticker_ids = {sw.sticker_id : sw for sw in sticker_wanted}
-        stickers = [sw.sticker for sw in sticker_wanted]        
-        sticker_wanted_by_offered_ids = {}
-        for sw in sticker_wanted:
-            if user['id'] in [o.user_id for o in sw.offers]:
-                sticker_wanted_by_offered_ids[sw.sticker_id] = sw.id 
-    return render_template('wanted_sticker.html', selected_user=selected_user, stickers=stickers, user=user, sticker_wanted_by_offered_ids=sticker_wanted_by_offered_ids, sticker_wanted_by_sticker_ids=sticker_wanted_by_sticker_ids)
+    context.selected_user = User.query.filter_by(id=int(user_id)).first()
+    context.stickers = []
+    if context.selected_user:
+        context.sticker_wanted = StickerWanted.query.filter_by(user_id=context.selected_user.id).all()
+        context.sticker_wanted_by_sticker_ids = {sw.sticker_id : sw for sw in context.sticker_wanted}
+        context.stickers = [sw.sticker for sw in context.sticker_wanted]        
+        context.sticker_wanted_by_offered_ids = {}
+        for sw in context.sticker_wanted:
+            if context.login_user.id in [o.user_id for o in sw.offers]:
+                context.sticker_wanted_by_offered_ids[sw.sticker_id] = sw.id 
+    return render_template('wanted_sticker.html', **context.data)
 
 @app.route('/offer/<user_id>')
 def offered_sticker(user_id):
@@ -147,6 +147,7 @@ def toggle_wanted():
         db.session.commit()
         message = f"added sticker entry for user sticker={sticker_id} user={user_id}"
     print(message)
+    # Note this toggle method doesn't swap any html elements
     return jsonify({"status": "ok", "message": message})
 
 @app.route('/toggle/offer', methods=['PUT'])
@@ -171,7 +172,8 @@ def toggle_offer():
         db.session.commit()
         message = f"added sticker offer entry for user sticker={sticker_wanted_id} user={user_id}"
     print(message)
-    return jsonify({"status": "ok", "message": message})
+    # Replace the offer badge showing the current counter
+    return render_template('offer_badge.html', sw=sticker_wanted)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -192,19 +194,17 @@ def login():
 
 @app.route('/profile', methods=['GET'])
 def profile():
-    user = session.get('user')
-    if user:
-        user = User.query.filter_by(id=user['id']).first()
-    if not user:
+    context = Context()
+    if not context.login_user:
         return redirect(url_for('login'))
-    return render_template('profile.html', user=user)
+    return render_template('profile.html', **context.data)
 
 @app.route('/profile/edit', methods=['POST'])
 def profile_edit():
-    user = session.get('user')
-    if not user:
+    context = Context()
+    if not context.login_user:
         return redirect(url_for('login'))
-    if user['id'] == request.form['user_id']:
+    if context.login_user.id == request.form['user_id']:
         raise ValueError("Invalid User Activity!")
     user = db.session.query(User).get(request.form['user_id'])
     user.name = request.form['user_name']

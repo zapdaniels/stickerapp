@@ -1,10 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-
-
-
 <div class="container mt-4">
     <div class="form-group">
         <label for="teamDropdown">Teams:</label>
@@ -25,7 +21,7 @@
             <tr>
                 <th>Team</th>
                 <th>Sticker</th>
-                {% if user %}
+                {% if login_user %}
                 <th>Suche Ich</th>
                 {% endif %}
             </tr>
@@ -35,19 +31,18 @@
                 <tr>
                     <td>{{ sticker.team.name }}</td>
                     <td>{{ sticker.name }}</td>
-                    {% if user %}
-
-                    <td>
-                        <label class="switch">
-                            <input type="checkbox"
-                                hx-trigger="change"
-                                hx-put="/toggle/wanted" 
-                                hx-vals="js:{sticker_id: {{ sticker.id }}, is_checked: event.srcElement.checked, user_id: {{ user.id if user else 0 }}}"
-                                {{"checked" if sticker.id in sticker_ids_wanted}} 
-                                >
-                            <span class="slider round"></span>
-                        </label>
-                    </td>
+                    {% if login_user %}
+                        <td>
+                            <label class="switch">
+                                <input type="checkbox"
+                                    hx-trigger="change"
+                                    hx-put="/toggle/wanted" 
+                                    hx-vals="js:{sticker_id: {{ sticker.id }}, is_checked: event.srcElement.checked, user_id: {{ login_user.id if login_user else 0 }}}"
+                                    {{"checked" if sticker.id in sticker_ids_wanted}} 
+                                    >
+                                <span class="slider round"></span>
+                            </label>
+                        </td>
                     {% endif %}
                 </tr>
             {% endfor %}
