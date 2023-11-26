@@ -17,8 +17,8 @@
   
       <div class="form-group">
         <label for="contact">Kontakt:</label>
-        <textarea class="form-control" id="contact" rows="3" name="user_contact" value="{{user.contact}}" placeholder="Wie sollen dich andere Benutzer kontaktieren?
-E-Mail? Oder Handynummer für WhatsApp, Signal etc.?"></textarea>
+        <textarea class="form-control" id="contact" rows="3" name="user_contact" placeholder="Wie sollen dich andere Benutzer kontaktieren?
+E-Mail? Oder Handynummer für WhatsApp, Signal etc.?">{{user.contact or ''}}</textarea>
       </div>
   
       <button type="submit" class="btn btn-primary">Speichern</button>

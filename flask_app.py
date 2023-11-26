@@ -4,11 +4,13 @@ from pathlib import Path
 # load environment settings
 import dotenv
 this_dir = Path(__file__).parent
-dotenv.load_dotenv(this_dir)
-try
+try:
+    # Workaround for pythonanywhere. Somehow it's not possible to use dotenv.
+    # Which is my preference. Instead I load a file which is not under version control updating the environment variable.
     import myenv
 except ImportError:
-    pass
+    dotenv.load_dotenv(this_dir)
+
 
 RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify"
 RECAPTCHA_WEBSITE_KEY = os.environ['RECAPTCHA_WEBSITE_KEY']
@@ -209,7 +211,7 @@ def profile_edit():
     user.contact = request.form['user_contact']
     db.session.commit()
     flash(f'Profil aktualisiert.')
-    return redirect(url_for('profile'))
+    return redirect(url_for('home'))
 
 @app.route('/logout')
 def logout():
