@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from collections import defaultdict
 
 # load environment settings
 import dotenv
@@ -64,7 +65,7 @@ def home():
                     continue
                 context.users_with_offer.append(offer.user)
         context.sticker_wanted_by_sticker_ids = {sw.sticker_id : sw for sw in context.sticker_wanted}
-        context.stickers = [sw.sticker for sw in context.sticker_wanted]
+        context.stickers_by_teams = group_by_teams(sw.sticker for sw in context.sticker_wanted)
     return render_template('mypage.html', **context.data)
 
 @app.route('/imprint')
@@ -77,14 +78,21 @@ def stickers():
     context.team_id =  request.args.get("team_id", default=None, type=int)
     context.teams = Team.query.all()
     if context.team_id:
-        context.stickers = Sticker.query.filter_by(team_id=int(context.team_id)).all()
+        stickers = Sticker.query.filter_by(team_id=int(context.team_id)).all()
     else:
-        context.stickers = Sticker.query.all()
+        stickers = Sticker.query.all()
+    context.stickers_by_teams = group_by_teams(stickers)
     context.sticker_ids_wanted = []
     if context.login_user:
         context.stickers_wanted = StickerWanted.query.filter_by(user_id=context.login_user.id).all()
         context.sticker_ids_wanted = [sw.sticker_id for sw in context.stickers_wanted]
     return render_template('stickers.html', **context.data)
+
+def group_by_teams(stickers):
+    stickers_by_teams = defaultdict(list)
+    for s in stickers:
+        stickers_by_teams[s.team].append(s)
+    return stickers_by_teams
 
 @app.route('/users_questing')
 def users_questing():
@@ -99,11 +107,11 @@ def stickers_wanted(user_id):
     if not context.login_user:
         return redirect(url_for('login'))
     context.selected_user = User.query.filter_by(id=int(user_id)).first()
-    context.stickers = []
+    context.stickers_by_teams = []
     if context.selected_user:
         context.sticker_wanted = StickerWanted.query.filter_by(user_id=context.selected_user.id).all()
         context.sticker_wanted_by_sticker_ids = {sw.sticker_id : sw for sw in context.sticker_wanted}
-        context.stickers = [sw.sticker for sw in context.sticker_wanted]        
+        context.stickers_by_teams = group_by_teams(sw.sticker for sw in context.sticker_wanted)
         context.sticker_wanted_by_offered_ids = {}
         for sw in context.sticker_wanted:
             if context.login_user.id in [o.user_id for o in sw.offers]:
@@ -116,12 +124,12 @@ def stickers_offered(user_id):
     if not context.login_user:
         return redirect(url_for('login'))
     context.selected_user = User.query.filter_by(id=int(user_id)).first()
-    context.stickers = []
+    context.stickers_by_teams = []
     if context.selected_user:
         context.sticker_wanted = StickerWanted.query.filter_by(user_id=context.login_user.id).all()
         context.sticker_wanted_ids = [sw.id for sw in context.sticker_wanted]
         context.sticker_offered = StickerOffer.query.filter_by(user_id=context.selected_user.id).filter(StickerOffer.sticker_wanted_id.in_(context.sticker_wanted_ids)).all()
-        context.stickers = [o.sw.sticker for o in context.sticker_offered]        
+        context.stickers_by_teams = group_by_teams(o.sw.sticker for o in context.sticker_offered)
     return render_template('stickers_offered.html', **context.data)
 
 
@@ -223,8 +231,12 @@ def register():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
-        recaptcha_response = request.form['g-recaptcha-response']
-        response = requests.post(RECAPTCHA_VERIFY_URL, params={'response' : recaptcha_response, 'secret' : RECAPTCHA_SECRET_KEY}).json()
+        if RECAPTCHA_WEBSITE_KEY:
+            recaptcha_response = request.form['g-recaptcha-response']
+            response = requests.post(RECAPTCHA_VERIFY_URL, params={'response' : recaptcha_response, 'secret' : RECAPTCHA_SECRET_KEY}).json()
+        else:
+            flash('Recaptcha ist nicht aktiviert!', 'error')
+            response = {'success' : True}
         if not response['success']:
             flash('Registrierung fehlgeschlagen. Recaptcha nicht akzeptiert', 'error')
         else:

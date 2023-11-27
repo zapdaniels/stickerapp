@@ -1,27 +1,31 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Team</th>
-            <th>Sticker</th>
+            <th>Team/Sticker</th>
             {% if checkbox_offer and login_user %}
             <th>Angebote</th>
-            {% if login_user.id != selected_user.id %}
-            <th>Abzugeben</th>
-            {% endif %}
+            <th>
+                {% if login_user.id != selected_user.id %}
+                Abzugeben
+                {% endif %}
+            </th>
             {% endif %}
         </tr>
     </thead>
     <tbody>
+        {% for team, stickers in stickers_by_teams.items() %}
+        <tr>
+            <td colspan="3" class="team-name">{{ team.name }}</td>
+        </tr>
         {% for sticker in stickers %}
         <tr>
-            <td>{{ sticker.team.name }}</td>
             <td>{{ sticker.name }}</td>
             {% set sw = sticker_wanted_by_sticker_ids[sticker.id] %}
             <td>
             {% include 'stickers_offered_badge.html' %}
             </td>
-            {% if login_user.id != selected_user.id %}
             <td>
+                {% if 1 or (login_user.id != selected_user.id) %}
                 <label class="switch">
                     <input type="checkbox"
                         hx-trigger="change"
@@ -33,9 +37,10 @@
                         >
                     <span class="slider round green"></span>
                 </label>
+                {% endif %}
             </td>
-            {% endif %}
         </tr>
+        {% endfor %}
         {% endfor %}
     </tbody>
 </table>

@@ -19,32 +19,37 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Team</th>
-                <th>Sticker</th>
-                {% if login_user %}
-                <th>Suche Ich</th>
-                {% endif %}
+                <th>Team/Spieler</th>
+                <th>
+                    {% if login_user %}
+                    Suche Ich
+                    {% endif %}
+                </th>
             </tr>
         </thead>
         <tbody>
+            {% for team, stickers in stickers_by_teams.items() %}
+                <tr>
+                    <td colspan="2" class="team-name">{{team.name}}</td>
+                </tr>
             {% for sticker in stickers %}
                 <tr>
-                    <td>{{ sticker.team.name }}</td>
                     <td>{{ sticker.name }}</td>
-                    {% if login_user %}
-                        <td>
-                            <label class="switch">
-                                <input type="checkbox"
-                                    hx-trigger="change"
-                                    hx-put="/toggle/wanted" 
-                                    hx-vals="js:{sticker_id: {{ sticker.id }}, is_checked: event.srcElement.checked, user_id: {{ login_user.id if login_user else 0 }}}"
-                                    {{"checked" if sticker.id in sticker_ids_wanted}} 
-                                    >
-                                <span class="slider round"></span>
-                            </label>
-                        </td>
-                    {% endif %}
+                    <td>
+                        {% if login_user %}
+                        <label class="switch">
+                            <input type="checkbox"
+                                hx-trigger="change"
+                                hx-put="/toggle/wanted" 
+                                hx-vals="js:{sticker_id: {{ sticker.id }}, is_checked: event.srcElement.checked, user_id: {{ login_user.id if login_user else 0 }}}"
+                                {{"checked" if sticker.id in sticker_ids_wanted}} 
+                                >
+                            <span class="slider round"></span>
+                        </label>
+                        {% endif %}
+                    </td>
                 </tr>
+            {% endfor %}
             {% endfor %}
         </tbody>
     </table>
