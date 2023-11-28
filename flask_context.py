@@ -1,6 +1,7 @@
 from flask import session, request
 from models import db, User
 
+
 class Context:
     def __init__(self):
         self._data = {}
@@ -8,7 +9,9 @@ class Context:
         self.session_user = session.get("user")
         self.login_user = None
         if self.session_user:
-            self.login_user = User.query.filter_by(id=int(self.session_user['id'])).first()
+            self.login_user = User.query.filter_by(
+                id=int(self.session_user["id"])
+            ).first()
 
     @property
     def data(self):
