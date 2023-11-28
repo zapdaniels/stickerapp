@@ -2,17 +2,19 @@
     <thead>
         <tr>
             <th>Team/Sticker</th>
+            <th>Angebot</th>
             <th>Suche</th>
         </tr>
     </thead>
     <tbody>
-        {% for team , stickers in stickers_by_teams.items() %}
+        {% for team, stickers in stickers_wanted_by_teams.items() %}
         <tr>
             <td colspan="2" class="team-name">{{ team.name }}</td>
         </tr>
         {% for sticker in stickers %}
         <tr>
             <td>{{ sticker.name }}</td>
+            <td></td>
             <td>
                 <label class="switch">
                     <input type="checkbox"

@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from collections import defaultdict
+from collections import Counter
 
 # load environment settings
 import dotenv
@@ -31,6 +32,7 @@ from flask import (
 from flask_bcrypt import Bcrypt
 from flask_session import Session
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import joinedload
 
 from models import db, User, Team, Sticker, StickerWanted, StickerOffer
 from admin_app import init_admin
@@ -54,18 +56,27 @@ admin = init_admin(app)
 @app.route('/')
 def home():
     context = Context()
-    context.stickers = []
-    context.sticker_wanted_by_sticker_ids = {}
-    context.users_with_offer = []
+    selected_user_id = request.args.get("selected_user_id", default=None, type=int)
+    context.selected_user = User.query.filter_by(id=selected_user_id).first()
+    #context.stickers_wanted_by_sticker_ids = {}
+    context.stickers_wanted_by_teams = []
+    context.stickers_offers = []
+    context.users_with_offers = {}
     if context.login_user:
-        context.sticker_wanted = StickerWanted.query.filter_by(user_id=context.login_user.id).all()
-        for sw in context.sticker_wanted:
-            for offer in sw.offers:
-                if offer.user in context.users_with_offer:
-                    continue
-                context.users_with_offer.append(offer.user)
-        context.sticker_wanted_by_sticker_ids = {sw.sticker_id : sw for sw in context.sticker_wanted}
-        context.stickers_by_teams = group_by_teams(sw.sticker for sw in context.sticker_wanted)
+        _query = StickerWanted.query.filter_by(user_id=context.login_user.id)
+        if context.selected_user:
+            _query = _query.filter(StickerOffer.user_id == context.selected_user.id)
+            #options(joinedload(StickerWanted.sticker).joinedload(Sticker.team))
+        context.stickers_wanted = _query.all()
+        context.stickers_wanted_by_teams = group_by_teams(sw.sticker for sw in context.stickers_wanted)
+        context.stickers_wanted_by_sticker_ids = {sw.sticker_id : sw for sw in context.stickers_wanted}
+        _query = StickerOffer.query \
+            .join(StickerWanted, StickerOffer.sticker_wanted_id == StickerWanted.id) \
+            .filter(StickerWanted.user_id == context.login_user.id)
+        if context.selected_user:
+            _query = _query.filter(StickerOffer.user_id == context.selected_user.id)
+        context.stickers_offers = _query.all()
+        context.users_with_offers = Counter(offer.user for offer in context.stickers_offers)
     return render_template('mypage.html', **context.data)
 
 @app.route('/imprint')

@@ -7,30 +7,30 @@
         </tr>
     </thead>
     <tbody>
-        {% for team, stickers in stickers_by_teams.items() %}
-        <tr>
-            <td colspan="4" class="team-name">{{ team.name }}</td>
-        </tr>
-        {% for sticker in stickers %}
-        <tr>
-            <td>{{ sticker.name }}</td>
-            <td align="center">
-                <label class="switch">
-                    <input type="checkbox"
-                        hx-trigger="change"
-                        hx-put="/toggle/wanted"
-                        hx-vals="js:{sticker_id: {{ sticker.id }}, is_checked: event.srcElement.checked, user_id: {{ login_user.id if login_user else 0 }}}"
-                        checked
-                        >
-                    <span class="slider round"></span>
-                </label>
-            </td>
-            {% set sw = sticker_wanted_by_sticker_ids[sticker.id] %}
-            <td align="center">
-            {% include 'stickers_offered_badge.html' %}
-            </td>
-        </tr>
-        {% endfor %}
+        {% for team, stickers in stickers_wanted_by_teams.items() %}
+            <tr>
+                <td colspan="4" class="team-name">{{ team.name }}</td>
+            </tr>
+            {% for sticker in stickers %}
+            <tr>
+                <td>{{ sticker.name }}</td>
+                <td align="center">
+                    <label class="switch">
+                        <input type="checkbox"
+                            hx-trigger="change"
+                            hx-put="/toggle/wanted"
+                            hx-vals="js:{sticker_id: {{ sticker.id }}, is_checked: event.srcElement.checked, user_id: {{ login_user.id if login_user else 0 }}}"
+                            checked
+                            >
+                        <span class="slider round"></span>
+                    </label>
+                </td>
+                {% set sw = stickers_wanted_by_sticker_ids.get(sticker.id) %}
+                <td align="center">
+                {% include 'stickers_offered_badge.html' %}
+                </td>
+            </tr>
+            {% endfor %}
         {% endfor %}
     </tbody>
 </table>
