@@ -163,3 +163,4 @@ cython_debug/
 *.sqlite
 flask_session/
 *.csv
+myenv.py
