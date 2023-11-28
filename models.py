@@ -40,15 +40,31 @@ class StickerWanted(db.Model):
     sticker_id = db.Column(db.Integer, db.ForeignKey('sticker.id'), nullable=False)
     user = db.relationship('User')
     sticker = db.relationship('Sticker')
-    offers = db.relationship('StickerOffer', viewonly=True, lazy=True)
+    offers = db.relationship('StickerOffer', viewonly=True, lazy=True)#, cascade="all, delete")
+
+    @property
+    def team(self):
+        return self.sticker.team
+
+    def get_offers(self, user:User=None):
+        if user is None:
+            return self.offers
+        return [o for o in self.offers if o.user_id == user.id]
 
 class StickerOffer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    sticker_wanted_id = db.Column(db.Integer, db.ForeignKey('sticker_wanted.id'), nullable=False)
+    sticker_wanted_id = db.Column(db.Integer, db.ForeignKey('sticker_wanted.id', ondelete="CASCADE"), nullable=False)
     offer_to = db.relationship('StickerWanted')
     user = db.relationship('User')
     sw = db.relationship('StickerWanted')
 
 
+def delete_orphaned_sticker_offers():
+    orphaned_offers = StickerOffer.query.all()
+    for offer in orphaned_offers:
+        if offer.sw is not None:
+            continue
+        db.session.delete(offer)
+    db.session.commit()
 

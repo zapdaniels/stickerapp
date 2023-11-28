@@ -35,6 +35,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import joinedload
 
 from models import db, User, Team, Sticker, StickerWanted, StickerOffer
+from models import delete_orphaned_sticker_offers
 from admin_app import init_admin
 from flask_context import Context
 
@@ -58,25 +59,17 @@ def home():
     context = Context()
     selected_user_id = request.args.get("selected_user_id", default=None, type=int)
     context.selected_user = User.query.filter_by(id=selected_user_id).first()
-    #context.stickers_wanted_by_sticker_ids = {}
-    context.stickers_wanted_by_teams = []
-    context.stickers_offers = []
+    context.stickers_wanted = []
+    #context.sickers_wanted_by_teams = []
+    #context.stickers_offered = []
     context.users_with_offers = {}
     if context.login_user:
-        _query = StickerWanted.query.filter_by(user_id=context.login_user.id)
-        if context.selected_user:
-            _query = _query.filter(StickerOffer.user_id == context.selected_user.id)
-            #options(joinedload(StickerWanted.sticker).joinedload(Sticker.team))
-        context.stickers_wanted = _query.all()
-        context.stickers_wanted_by_teams = group_by_teams(sw.sticker for sw in context.stickers_wanted)
-        context.stickers_wanted_by_sticker_ids = {sw.sticker_id : sw for sw in context.stickers_wanted}
-        _query = StickerOffer.query \
-            .join(StickerWanted, StickerOffer.sticker_wanted_id == StickerWanted.id) \
-            .filter(StickerWanted.user_id == context.login_user.id)
-        if context.selected_user:
-            _query = _query.filter(StickerOffer.user_id == context.selected_user.id)
-        context.stickers_offers = _query.all()
-        context.users_with_offers = Counter(offer.user for offer in context.stickers_offers)
+        context.stickers_wanted = StickerWanted.query.filter_by(user_id=context.login_user.id) \
+                                    .options(joinedload(StickerWanted.sticker).joinedload(Sticker.team)) \
+                                    .all()
+        context.sickers_wanted_by_teams = group_by_teams(sw for sw in context.stickers_wanted)
+        #context.stickers_wanted_by_sticker_ids = {sw.sticker_id : sw for sw in context.stickers_wanted}
+        context.users_with_offers = Counter(o.user for sw  in context.stickers_wanted for o in sw.offers)
     return render_template('mypage.html', **context.data)
 
 @app.route('/imprint')
@@ -157,6 +150,8 @@ def toggle_wanted():
     message = "no change"
     if sticker_wanted and is_checked is False:
         # Sticker request exists, delete it
+        for offer in sticker_wanted.offers:
+            db.session.delete(offer)
         db.session.delete(sticker_wanted)
         db.session.commit()
         message = f"removed sticker entry for user sticker={sticker_id} user={user_id}"
@@ -268,3 +263,4 @@ def register():
 # Create database tables within the Flask application context
 with app.app_context():
     db.create_all()
+    delete_orphaned_sticker_offers()

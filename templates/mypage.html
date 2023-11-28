@@ -7,28 +7,11 @@
     <div class="alert alert-info">
         Bitte erst einen <a href="/register">Account einrichten</a> und/oder <a href="/login">anmelden</a> um Sticker zu markieren.
     </div>
-    {% elif not stickers_wanted_by_teams %}
+    {% elif not stickers_wanted %}
     <div class="alert alert-info">
         Es sind keine Sticker von dir markiert. Gehe zu <a href="/stickers">Alle Sticker</a> und markiere was du suchst.
     </div>
     {% else %}
-        {% if users_with_offers %}
-        <div class="form-group">
-            <label for="offerDropdown">Anbieter:</label>
-            <form action="/" method="get">
-                <select class="form-control" id="offerDropdown" name="selected_user_id" onchange="this.form.submit()">
-                    <option value="" {{'selected' if selected_user == None}}></option>
-                    {% for user, count in users_with_offers.items() %}
-                    <option value="{{user.id}}"
-                    {{'selected' if selected_user and selected_user.id == user.id else ''}}
-                    >{{user}} {{count}}</option>
-                    {% endfor %}
-                </select>
-            </form>
-        </div>
-        {% endif %}
-        {% if selected_user %}
-        {% endif %}
         {% include 'stickers_mypage_table.html' %}
     {% endif %}
 </div>

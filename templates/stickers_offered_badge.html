@@ -1,4 +1,4 @@
 <span id="offer-value-{{sw.id}}"
-      class="badge badge-info {{'offer-active' if sw.offers else 'offer-inactive'}}">
-      {{sw.offers|length}}
+      class="badge badge-info {{'offer-active' if sw.get_offers(selected_user or None) else 'offer-inactive'}}">
+      {{sw.get_offers(selected_user or None)|length}}
 </span>
