@@ -12,10 +12,10 @@
         </thead>
         <tbody>
             {% for user in users %}
-                <tr>
-                    <td>{{ user }}</td>
-                    <td><a class="btn btn-primary" href="/wanted/{{ user.id }}">{{user.sticker_wanted|length}}</a></td>
-                </tr>
+            <tr>
+                <td>{{ user }}</td>
+                <td><a class="btn btn-primary" href="/wanted/{{ user.id }}">{{user.sticker_wanted|length}}</a></td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>

@@ -5,14 +5,15 @@
     <h2>Meine Suche</h2>
     {% if not login_user %}
     <div class="alert alert-info">
-        Bitte erst einen <a href="/register">Account einrichten</a> und/oder <a href="/login">anmelden</a> um Sticker zu markieren.
+        Bitte erst einen <a href="/register">Account einrichten</a> und/oder <a href="/login">anmelden</a> um Sticker zu
+        markieren.
     </div>
     {% elif not stickers_wanted %}
     <div class="alert alert-info">
         Es sind keine Sticker von dir markiert. Gehe zu <a href="/stickers">Alle Sticker</a> und markiere was du suchst.
     </div>
     {% else %}
-        {% include 'stickers_mypage_table.html' %}
+    {% include 'stickers_mypage_table.html' %}
     {% endif %}
 </div>
 

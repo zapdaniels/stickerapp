@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="form-group">
+        <label for="teamDropdown">Teams:</label>
+        <form action="/stickers" method="get">
+            <select class="form-control" id="teamDropdown" name="team_id" onchange="this.form.submit()">
+                <option value="" {{'selected' if team_id==None else '' }}></option>
+                {% for team in teams %}
+                <option value="{{team.id}}" {{'selected' if team_id==team.id else '' }}>{{team.name}}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+    <h2>Sticker</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Team/Spieler</th>
+                <th>
+                    {% if login_user %}
+                    Suche Ich
+                    {% endif %}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for team, stickers in stickers_by_teams.items() %}
+            <tr>
+                <td colspan="2" class="team-name">{{team.name}}</td>
+            </tr>
+            {% for sticker in stickers %}
+            <tr>
+                <td>{{ sticker.name }}</td>
+                <td>
+                    {% if login_user %}
+                    <label class="switch">
+                        <input type="checkbox" hx-trigger="change" hx-put="/toggle/wanted"
+                            hx-vals="js:{sticker_id: {{ sticker.id }}, is_checked: event.srcElement.checked, user_id: {{ login_user.id if login_user else 0 }}}"
+                            {{"checked" if sticker.id in sticker_ids_wanted}}>
+                        <span class="slider round"></span>
+                    </label>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}

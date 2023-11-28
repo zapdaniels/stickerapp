@@ -9,7 +9,8 @@ import dotenv
 this_dir = Path(__file__).parent
 try:
     # Workaround for pythonanywhere. Somehow it's not possible to use dotenv.
-    # Which is my preference. Instead I load a file which is not under version control updating the environment variable.
+    # Which is my preference. Instead I load a file which is not under 
+    # version control updating the environment variable.
     import myenv
 except ImportError:
     dotenv.load_dotenv(this_dir)

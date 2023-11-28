@@ -13,16 +13,14 @@
             <label for="password">Password</label>
             <input type="password" class="form-control" id="password" name="password" required>
         </div>
-        <button class="g-recaptcha btn btn-primary" 
-                data-sitekey="{{sitekey}}" 
-                data-callback='onSubmit' 
-                data-action='submit'>Register</button>
+        <button class="g-recaptcha btn btn-primary" data-sitekey="{{sitekey}}" data-callback='onSubmit'
+            data-action='submit'>Register</button>
 
     </form>
 </div>
 <script>
     function onSubmit(token) {
-      document.getElementById("register-form").submit();
+        document.getElementById("register-form").submit();
     }
 </script>
 {% endblock content %}

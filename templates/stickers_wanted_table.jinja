@@ -22,19 +22,15 @@
             <td>{{ sticker.name }}</td>
             {% set sw = sticker_wanted_by_sticker_ids[sticker.id] %}
             <td>
-            {% include 'stickers_offered_badge.html' %}
+                {% include 'stickers_offered_badge.html' %}
             </td>
             <td>
                 {% if 1 or (login_user.id != selected_user.id) %}
                 <label class="switch">
-                    <input type="checkbox"
-                        hx-trigger="change"
-                        hx-put="/toggle/offer"
+                    <input type="checkbox" hx-trigger="change" hx-put="/toggle/offer"
                         hx-vals="js:{sticker_wanted_id: {{ sw.id }}, is_checked: event.srcElement.checked, user_id: {{ login_user.id if login_user else 0 }}}"
-                        hx-target="#offer-value-{{sw.id}}"
-                        hx-swap="outerHTML"
-                        {{"checked" if sticker.id in sticker_wanted_by_offered_ids}}
-                        >
+                        hx-target="#offer-value-{{sw.id}}" hx-swap="outerHTML" {{"checked" if sticker.id in
+                        sticker_wanted_by_offered_ids}}>
                     <span class="slider round green"></span>
                 </label>
                 {% endif %}

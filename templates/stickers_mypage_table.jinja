@@ -1,0 +1,48 @@
+{% if users_with_offers %}
+<div class="form-group">
+    <label for="offerDropdown">Anbieter:</label>
+    <form action="/" method="get">
+        <select class="form-control" id="offerDropdown" name="selected_user_id" onchange="this.form.submit()">
+            <option value="" {{'selected' if selected_user==None}}></option>
+            {% for user, count in users_with_offers.items() %}
+            <option value="{{user.id}}" {{'selected' if selected_user and selected_user.id==user.id else '' }}>{{count}}
+                Sticker von {{user}}</option>
+            {% endfor %}
+        </select>
+    </form>
+</div>
+{% endif %}
+
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Sticker</th>
+            <th>Suche</th>
+            <th>Angebote</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for team, sw_entries in sickers_wanted_by_teams.items() %}
+        <tr>
+            <td colspan="4" class="team-name">{{ team.name }}</td>
+        </tr>
+        {% for sw in sw_entries %}
+        <tr>
+            <td>{{ sw.sticker.name }}</td>
+            <td align="center">
+                <label class="switch">
+                    <input type="checkbox" hx-trigger="change" hx-put="/toggle/wanted"
+                        hx-vals="js:{sticker_id: {{ sw.sticker.id }}, is_checked: event.srcElement.checked, user_id: {{ login_user.id if login_user else 0 }}}"
+                        checked>
+                    <span class="slider round"></span>
+                </label>
+            </td>
+            <td align="center">
+                {% include 'stickers_offered_badge.html' %}
+            </td>
+        </tr>
+        {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>
