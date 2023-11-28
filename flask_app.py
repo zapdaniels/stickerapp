@@ -74,7 +74,8 @@ def home():
 
 @app.route('/imprint')
 def imprint():
-    return render_template('imprint.html')
+    context = Context()
+    return render_template('imprint.html', **context.data)
 
 @app.route('/stickers')
 def stickers():

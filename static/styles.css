@@ -1,0 +1,95 @@
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 45px;
+    height: 27px;
+  }
+
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 25px;
+    width: 25px;
+    left: 1px;
+    bottom: 1px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+
+  input:checked + .slider {
+    background-color: #2196F3;
+  }
+
+  input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+  }
+
+  input:checked + .slider.green {
+    background-color: #17b81c;
+  }
+
+  input:focus + .slider.green {
+    box-shadow: 0 0 1px #17b81c;
+  }
+
+  input:checked + .slider:before {
+    -webkit-transform: translateX(18px);
+    -ms-transform: translateX(18px);
+    transform: translateX(18px);
+  }
+
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 28px;
+  }
+
+  .slider.round:before {
+    border-radius: 50%;
+  }
+
+  .offer-active {
+    padding: 0.7em;
+    background-color: #17b81c;
+  }
+  
+  .offer-inactive {
+    padding: 0.7em;
+    background-color: #949794;
+  }
+
+  body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+  }
+  main {
+      flex: 1;
+  }
+
+  td.team-name {
+    padding-left: 2em;
+    font-weight: bold;
+    color: black;
+    background-color:lightskyblue;
+    border-top: 1px solid darkgrey;
+  }
