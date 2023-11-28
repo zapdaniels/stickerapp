@@ -79,13 +79,13 @@ def home():
         context.users_with_offers = Counter(
             o.user for sw in context.stickers_wanted for o in sw.offers
         )
-    return render_template("mypage.html", **context.data)
+    return render_template("mypage.jinja", **context.data)
 
 
 @app.route("/imprint")
 def imprint():
     context = Context()
-    return render_template("imprint.html", **context.data)
+    return render_template("imprint.jinja", **context.data)
 
 
 @app.route("/stickers")
@@ -104,7 +104,7 @@ def stickers():
             user_id=context.login_user.id
         ).all()
         context.sticker_ids_wanted = [sw.sticker_id for sw in context.stickers_wanted]
-    return render_template("stickers.html", **context.data)
+    return render_template("stickers.jinja", **context.data)
 
 
 def group_by_teams(stickers):
@@ -118,7 +118,7 @@ def group_by_teams(stickers):
 def users_questing():
     context = Context()
     context.users = User.query.filter(User.sticker_wanted.any()).all()
-    return render_template("users_questing.html", **context.data)
+    return render_template("users_questing.jinja", **context.data)
 
 
 @app.route("/wanted/<user_id>")
@@ -142,7 +142,7 @@ def stickers_wanted(user_id):
         for sw in context.sticker_wanted:
             if context.login_user.id in [o.user_id for o in sw.offers]:
                 context.sticker_wanted_by_offered_ids[sw.sticker_id] = sw.id
-    return render_template("stickers_wanted.html", **context.data)
+    return render_template("stickers_wanted.jinja", **context.data)
 
 
 @app.route("/offer/<user_id>")
@@ -165,7 +165,7 @@ def stickers_offered(user_id):
         context.stickers_by_teams = group_by_teams(
             o.sw.sticker for o in context.sticker_offered
         )
-    return render_template("stickers_offered.html", **context.data)
+    return render_template("stickers_offered.jinja", **context.data)
 
 
 @app.route("/toggle/wanted", methods=["PUT"])
@@ -223,7 +223,7 @@ def toggle_offer():
         message = f"added sticker offer entry for user sticker={sticker_wanted_id} user={user_id}"
     print(message)
     # Replace the offer badge showing the current counter
-    return render_template("stickers_offered_badge.html", sw=sticker_wanted)
+    return render_template("stickers_offered_badge.jinja", sw=sticker_wanted)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -241,7 +241,7 @@ def login():
         else:
             flash("Invalid email or password", "danger")
 
-    return render_template("login.html", sitekey=RECAPTCHA_WEBSITE_KEY)
+    return render_template("login.jinja", sitekey=RECAPTCHA_WEBSITE_KEY)
 
 
 @app.route("/profile", methods=["GET"])
@@ -249,7 +249,7 @@ def profile():
     context = Context()
     if not context.login_user:
         return redirect(url_for("login"))
-    return render_template("profile.html", **context.data)
+    return render_template("profile.jinja", **context.data)
 
 
 @app.route("/profile/edit", methods=["POST"])
@@ -305,7 +305,7 @@ def register():
                 )
             except Exception as e:
                 flash(f"Registrierung fehlgeschlagen. Fehler:\n{e}", "error")
-    return render_template("register.html", sitekey=RECAPTCHA_WEBSITE_KEY)
+    return render_template("register.jinja", sitekey=RECAPTCHA_WEBSITE_KEY)
 
 
 # Create database tables within the Flask application context

@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.jinja" %}
 
 {% block content %}
 {% if selected_user %}
@@ -10,7 +10,7 @@
             Markiere die Sticker die Du anbieten kannst
         </p>
     </div>
-    {% include 'stickers_wanted_table.html' %}
+    {% include 'stickers_wanted_table.jinja' %}
 </div>
 {% endif %}
 {% endblock content %}

@@ -13,6 +13,12 @@
 </div>
 {% endif %}
 
+{% if selected_user %}
+<div class="container mt-4">
+    <p><strong>E-Mail:</strong> <i>{{selected_user.email}}</i></p>
+    <p><strong>Kontakt:</strong> {{selected_user.contact}}</p>
+</div>    
+{% endif %}
 
 <table class="table table-striped">
     <thead>
@@ -39,7 +45,7 @@
                 </label>
             </td>
             <td align="center">
-                {% include 'stickers_offered_badge.html' %}
+                {% include 'stickers_offered_badge.jinja' %}
             </td>
         </tr>
         {% endfor %}

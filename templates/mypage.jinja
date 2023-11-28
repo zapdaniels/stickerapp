@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.jinja" %}
 
 {% block content %}
 <div class="container mt-5">
@@ -13,7 +13,12 @@
         Es sind keine Sticker von dir markiert. Gehe zu <a href="/stickers">Alle Sticker</a> und markiere was du suchst.
     </div>
     {% else %}
-    {% include 'stickers_mypage_table.html' %}
+    <p class="alert alert-warning">
+        Folgende Sticker werden dir angeboten.<br />
+        Du kannst die Markierung aufheben wenn du die Sticker nicht mehr benötigst.<br>
+        <strong>Achtung:</strong> Für aufgehobene Sticker verschwinden auch die Angebote!
+    </p>
+    {% include 'stickers_mypage_table.jinja' %}
     {% endif %}
 </div>
 
