@@ -5,7 +5,7 @@
             {% if checkbox_offer and login_user %}
             <th>Angebote</th>
             <th>
-                {% if login_user.id != selected_user.id %}
+                {% if login_user.id != user_asking.id %}
                 Abzugeben
                 {% endif %}
             </th>
@@ -25,7 +25,7 @@
                 {% include 'stickers_offered_badge.jinja' %}
             </td>
             <td>
-                {% if (login_user.id != selected_user.id) %}
+                {% if (login_user.id != user_asking.id) %}
                 <label class="switch">
                     <input type="checkbox" hx-trigger="change" hx-put="/toggle/offer"
                         hx-vals="js:{sticker_wanted_id: {{ sw.id }}, is_checked: event.srcElement.checked, user_id: {{ login_user.id if login_user else 0 }}}"

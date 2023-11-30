@@ -126,11 +126,11 @@ def stickers_wanted(user_id):
     context = Context()
     if not context.login_user:
         return redirect(url_for("login"))
-    context.selected_user = User.query.filter_by(id=int(user_id)).first()
+    context.user_asking = User.query.filter_by(id=int(user_id)).first()
     context.stickers_by_teams = []
-    if context.selected_user:
+    if context.user_asking:
         context.sticker_wanted = StickerWanted.query.filter_by(
-            user_id=context.selected_user.id
+            user_id=context.user_asking.id
         ).all()
         context.sticker_wanted_by_sticker_ids = {
             sw.sticker_id: sw for sw in context.sticker_wanted
