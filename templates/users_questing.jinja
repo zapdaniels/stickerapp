@@ -8,6 +8,7 @@
             <tr>
                 <th>E-Mail</th>
                 <th>Gesucht</th>
+                <th>Angeboten</th>
             </tr>
         </thead>
         <tbody>
@@ -15,6 +16,7 @@
             <tr>
                 <td>{{ user }}</td>
                 <td><a class="btn btn-primary" href="/wanted/{{ user.id }}">{{user.sticker_wanted|length}}</a></td>
+                <td><a class="btn btn-success" href="/wanted/{{ user.id }}">{{user.sticker_wanted|selectattr('offers')|list|length}}</a></td>
             </tr>
             {% endfor %}
         </tbody>
